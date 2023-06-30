@@ -1,15 +1,15 @@
 ### VPC（新しく作ったもの）
-![VPC](image_04\作成したVPC.png)
+![VPC](image_04/作成したVPC.png)
 
 ### 構築したEC2インスタンス
-![EC2_1.png](image_04\作成したEC2インスタンス1.png)
-![EC2_2.png](image_04\作成したEC2インスタンス2.png)
+![EC2_1.png](image_04/作成したEC2インスタンス1.png)
+![EC2_2.png](image_04/作成したEC2インスタンス2.png)
 
 ### 構築したRDS
-![RDS.png](image_04\作成したRDS1.png)
+![RDS.png](image_04/作成したRDS1.png)
 
 ### EC2 から RDS へ接続確認
-![EC2→RDS接続.png](image_04\EC2→RDS接続確認.png)
+![EC2→RDS接続.png](image_04/EC2→RDS接続確認.png)
 
 ### 理解したこと
 * AWS上で各種サーバを立てること自体は難しくはないが、それぞれのつながり方がイメージすることが大事
