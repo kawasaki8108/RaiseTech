@@ -33,13 +33,13 @@ Cost Anomaly Detection||
  [CloudTrail レコードの内容](https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/cloudtrail-event-reference-record-contents.html)  
  [CloudTrail を用いて不適切な操作を検出する](https://aws.amazon.com/jp/blogs/news/using-cloudtrail-to-identify-unexpected-behaviors-in-individual-workloads/)
 
-イベント：ListBuckets
+イベント：ListBuckets  
 |含まれる内容|今回の例|
-:---|:---|:---|:---|:---
-イベント名<br>(eventName)|ListBuckets|
-リクエストが行われたサービス<br>(eventSource)|S3|
-リクエストが行われたエージェント<br>(userAgent)|aws-internal/3 aws-sdk-java|
-誰がアクションを実行したか<br>(userIdentify)<br>(sourceIPAddress)|（割愛）
+|:---|:---|
+|イベント名<br>(eventName)|ListBuckets|
+|リクエストが行われたサービス<br>(eventSource)|S3|
+|リクエストが行われたエージェント<br>(userAgent)|aws-internal/3 aws-sdk-java|
+|誰がアクションを実行したか<br>(userIdentify)<br>(sourceIPAddress)|（割愛）|
 
 #### 操作方法
 CloudTrailはuserが意図せずともイベントを記録してくれているので、「証跡の作成」ボタンからはじまります。今回の操作では抽出するユーザーと日付を絞っています。  
