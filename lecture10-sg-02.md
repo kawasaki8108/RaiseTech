@@ -23,9 +23,9 @@
 
 
 ### 2｜SourceSecurityGroupId又はName記述漏れ
-▼Stack作成は完了したもののインバウンドルールがない状態になっていました。  
+▼Stack作成は完了したもののインバウンドルールがない状態になっていました。<br>
 ![sgRDSingressMiss](image_10/207_sgRDSingressMiss.png)<br>
-▼その時のyamlファイルの状況です
+▼その時のyamlファイルの状況です<br>
 ![sgRDSingressMiss-yaml](image_10/208_sgRDSingressMiss-yaml.png)<br>
 調べた結果、RDS(MySQL)用のセキュリティグループのインバウンドルールとしてsourceを記述できていないことが問題だとわかりました。  
 参考記事）<br> [（公式）RDS｜セキュリティグループによるアクセス制御](https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/Overview.RDSSecurityGroups.html)<br>[（公式）AWS::EC2::SecurityGroupIngress](https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-security-group-ingress.html)<br>[【AWS】 CloudFormationで基本的な構成のEC2とRDSを作る](https://qiita.com/kobayashi_0226/items/d0f49dbe84937de73a4d)

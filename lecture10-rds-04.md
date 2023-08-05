@@ -17,7 +17,7 @@
 ▼念のためEC2からRDS(MySQL)への接続確認  
 ![Ec2RDS接続確認](image_10/401_Ec2RDS接続確認.png)
 ## 完了に至るまでに間違えたこと
-### 1｜サブネットグループをいう考え方を把握していなかった
+### 1｜サブネットグループという考え方を把握していなかった
 * はじめ、論理ID:RDSInstance内にDBSSubnetGroupNameを指定したら、サブネットが見つからない旨のエラー発生
 ![DBsubnetGroupなしでミス](image_10/403_DBsubnetGroupなしでミス2.png)  
 * 公式ドキュメントに見まして↓、DBSSubnetGroupを指定することでVPC指定するとのこと。確かにこのRDSのVPCを設定しているところないなぁと思っていましたがこういう仕組みだったのですね。  
@@ -26,7 +26,7 @@
 * [公式）DB サブネットグループの使用](https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html#USER_VPC.Subnets)
 * [CloudFormation による動的サイトの構築自動化](https://hackmd.io/@XPx55BOdQVm_Flkoze74_A/ByEmGFtXH)
 ### その他参考記事
-EC2からRDSへの接続まででGPGキーが最新でないというエラーを返されていて、実はつまづいていたので以下の記事参考にしました。　
+実は、EC2からRDSへの接続まででGPGキーが最新でないというエラーを返されていて、少しハマっていたので以下の記事参考にしました。　
 * [AWS EC2 AmazonLinux2 MySQLをインストールする](https://qiita.com/miriwo/items/eb09c065ee9bb7e8fe06)
 * [EC2-Amazonlinux2にMySQL8.0をインストールする](https://tech.noricgeographic.com/amazonlinux2%E3%81%ABmysql8-0%E3%82%92%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%81%99%E3%82%8B/)
 ##### 実行したcommandのメモ

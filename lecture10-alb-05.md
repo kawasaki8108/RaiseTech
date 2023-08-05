@@ -1,7 +1,7 @@
 ## Resources:
 ▼論理ID：ALB、ALBListener<br>
 ![albcomp1](image_10/501_albcomp1.png)  
-設定しないことによるデフォ確認（緑マーク）
+**設定しないことによるデフォ確認**（緑マーク）
 ![設定しないことによるデフォ確認](image_10/503_albcomp.png)<br>
 ▼論理ID：TargetGroup<br>
 ![TG](image_10/502_albcomp.png)  

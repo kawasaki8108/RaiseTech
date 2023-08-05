@@ -7,11 +7,11 @@
 ▼論理ID：EC2Instance:<br>
 緑マーク：最初パブリックアドレスが表示されなかったので、Propaties内にNetworkInterfaceのAssociatePublicAdressをOnしたというマークです。  
 ![ec2コンソール画面](image_10/301_ec2.png)<br>
-適用したSG  
+**適用したSG**  
 ![ec2SG](image_10/303_ec2SG.png)<br>
-定義したEBS  
+**定義したEBS**  
 ![ec2EBS](image_10/304_ec2EBS.png)<br>
-一応接続確認  
+**一応接続確認**  
 ![ec2コンソール画面接続確認](image_10/302_ec2接続確認.png)
 
 ## 完了に至るまでに間違えたこと
