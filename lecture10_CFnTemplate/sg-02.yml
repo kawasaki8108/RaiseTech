@@ -1,0 +1,93 @@
+# ----------Outputsのメモ----------
+# VPCId：vpc-01-VPCId
+# PublicSubnetIds：vpc-01-PublicSubnetIds
+# PrivateSubnetIds：vpc-01-PrivateSubnetIds
+# SecurityGroupIds for EC2:sg-02-app-sg
+# SecurityGroupIds for ALB:sg-02-alb-sg
+# SecurityGroupIds for RDS:sg-02-rds-sg
+
+
+AWSTemplateFormatVersion: "2010-09-09"
+# SecurityGroupのテンプレート
+Description: create-sg
+Parameters:
+  NameBase:
+    Description: this is base name
+    Type: String
+    Default: lecture10
+
+
+Resources:
+# EC2（APサーバ）用のsg：SSH接続可とHTTP(80ポート)
+  SecurityGroupEC2:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH access via port 22 and HTTP access via port 80
+      GroupName: !Sub ${NameBase}-ec2-sg
+      SecurityGroupIngress: 
+        - # ALBからのインバウンドとして
+          IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+        - # EC2へSSH接続して設定調整などの必要性を加味して          
+          IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-app-sg
+      VpcId: !ImportValue vpc-01-VPCId
+# ALB用のsg：HTTP(80ポート)
+  SecurityGroupALB:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ALB Security Group
+      GroupName: !Sub ${NameBase}-alb-sg
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-alb-sg
+      VpcId: !ImportValue vpc-01-VPCId
+# RDS用のsg：MySQL用の3306
+  SecurityGroupRDS:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: RDS Security Group
+      GroupName: !Sub ${NameBase}-rds-sg
+      SecurityGroupIngress:
+        - # SourceSecurityGroupIdによってアクセス制御なので要素をいれる
+          FromPort: 3306
+          ToPort: 3306
+          IpProtocol: tcp
+          SourceSecurityGroupId: !Ref SecurityGroupEC2
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-rds-sg
+      VpcId: !ImportValue vpc-01-VPCId
+
+Outputs:
+# EC2インスタンスのCFnテンプレートの引数のため
+  SecurityGroupIdsEC2:
+    Description: SecurityGroupIds for EC2
+    Value: !Ref SecurityGroupEC2
+    Export: 
+      Name: !Sub ${AWS::StackName}-app-sg
+# ALBインスタンスのCFnテンプレートの引数のため
+  SecurityGroupIdsALB:
+    Description: SecurityGroupIds for ALB
+    Value: !Ref SecurityGroupALB
+    Export: 
+      Name: !Sub ${AWS::StackName}-alb-sg
+# RDSインスタンスのCFnテンプレートの引数のため
+  SecurityGroupIdsRDS:
+    Description: SecurityGroupIds for RDS
+    Value: !Ref SecurityGroupRDS
+    Export: 
+      Name: !Sub ${AWS::StackName}-rds-sg

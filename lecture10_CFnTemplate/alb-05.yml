@@ -1,0 +1,64 @@
+# ----------Outputsのメモ----------
+# VPCId：vpc-01-VPCId
+# PublicSubnetIds：vpc-01-PublicSubnetIds
+# PrivateSubnetIds：vpc-01-PrivateSubnetIds
+# SecurityGroupIds for EC2:sg-02-app-sg
+# SecurityGroupIds for ALB:sg-02-alb-sg
+# SecurityGroupIds for RDS:sg-02-rds-sg
+# EC2PublicIP：ec2-03-EC2PublicIP
+# EC2PublicDnsName：ec2-03-EC2PublicDnsName
+# EC2InstanceID：ec2-03-EC2InstanceID
+# LoadBalancerDNSName：alb-05-alb-dnsname
+
+# ALB作成のテンプレート
+AWSTemplateFormatVersion: "2010-09-09"
+Description: create-alb
+Parameters:
+  NameBase:
+    Description: this is base name
+    Type: String
+    Default: lecture10
+
+Resources:
+  ALB:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Subnets: 
+        - !Select [1, !Split [",", !ImportValue "vpc-01-PublicSubnetIds"]]
+        - !Select [0, !Split [",", !ImportValue "vpc-01-PublicSubnetIds"]]
+      SecurityGroups:
+        - !ImportValue sg-02-alb-sg
+      Tags: 
+        - Key: Name
+          Value: !Sub ${NameBase}-alb_cfn
+
+  ALBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref ALB
+      Protocol: HTTP
+      Port: 80
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
+      
+
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: !ImportValue vpc-01-VPCId
+      Protocol: HTTP
+      Port: 80
+      TargetType: instance
+      Targets:
+        - Id: !ImportValue ec2-03-EC2InstanceID
+      Tags: 
+        - Key: Name
+          Value: !Sub ${NameBase}-tg_cfn
+
+Outputs:
+  LoadBalancerDNSName:
+    Description: DNS name of the application load balancer
+    Value: !GetAtt ALB.DNSName
+    Export: 
+      Name: !Sub ${AWS::StackName}-alb-dnsname

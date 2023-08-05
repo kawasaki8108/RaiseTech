@@ -1,0 +1,55 @@
+# ----------Outputsのメモ----------
+# VPCId：vpc-01-VPCId
+# PublicSubnetIds：vpc-01-PublicSubnetIds
+# PrivateSubnetIds：vpc-01-PrivateSubnetIds
+# SecurityGroupIds for EC2:sg-02-app-sg
+# SecurityGroupIds for ALB:sg-02-alb-sg
+# SecurityGroupIds for RDS:sg-02-rds-sg
+# EC2PublicIP：ec2-03-EC2PublicIP
+# EC2PublicDnsName：ec2-03-EC2PublicDnsName
+# EC2InstanceID：ec2-03-EC2InstanceID
+
+
+# RDSインスタンス作成のテンプレート
+AWSTemplateFormatVersion: "2010-09-09"
+Description: create-rds
+Parameters:
+  NameBase:
+    Description: this is base name
+    Type: String
+    Default: lecture10
+
+Resources:
+  DbSubnetGroup01:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: DB Subnet
+      SubnetIds: #RDSのVPC指定はDBサブネットグループを組むことにより成り立つそう。
+        - !Select [0, !Split [",", !ImportValue "vpc-01-PrivateSubnetIds"]]
+        - !Select [1, !Split [",", !ImportValue "vpc-01-PrivateSubnetIds"]]   
+        # - !Select [0, !Split [",", !ImportValue "vpc-01-PublicSubnetIds"]]
+        # - !Select [1, !Split [",", !ImportValue "vpc-01-PublicSubnetIds"]] 
+
+  RDSInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      Engine: mysql
+      DBInstanceClass: db.t3.micro
+      EngineVersion: 8.0.33
+      AllocatedStorage: 20
+      MasterUsername: 'admin'
+      # AWS Systems Managerのパラメータストアを使用してMasterUserPasswordを定義
+      MasterUserPassword: '{{resolve:ssm-secure:RDSMasterPassword:1}}'
+      AvailabilityZone: ap-northeast-1c
+      DBSubnetGroupName: !Ref DbSubnetGroup01 #!Select [1, !Split [",", !ImportValue "vpc-01-PrivateSubnetIds"]]
+      VPCSecurityGroups: 
+        - !ImportValue sg-02-rds-sg
+      MultiAZ: false # 青字なのはたぶんブール値だから（エディターによる）
+      Tags:
+      - Key: Name
+        Value: !Sub ${NameBase}-rds_instance_cfn
+
+Outputs:
+  RDSEndpoint:
+    Description: RDS endpoint
+    Value: !GetAtt RDSInstance.Endpoint.Address
