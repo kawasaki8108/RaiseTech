@@ -1,0 +1,93 @@
+# ----------Outputsのメモ----------
+# VPCId：vpc-01-VPCId
+# PublicSubnetIds：vpc-01-PublicSubnetIds
+# PrivateSubnetIds：vpc-01-PrivateSubnetIds
+# SecurityGroupIds for EC2:sg-02-app-sg
+# SecurityGroupIds for ALB:sg-02-alb-sg
+# SecurityGroupIds for RDS:sg-02-rds-sg
+# EC2PublicIP：ec2-03-EC2PublicIP
+# EC2PublicDnsName：ec2-03-EC2PublicDnsName
+# EC2InstanceID：ec2-03-EC2InstanceID
+# LoadBalancerDNSName：alb-05-alb-dnsname
+
+# S3インスタンス作成のテンプレート
+AWSTemplateFormatVersion: "2010-09-09"
+Description: create-s3
+Parameters:
+  NameBase:
+    Description: this is base name
+    Type: String
+    Default: lecture10
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties: 
+      BucketName: !Sub ${NameBase}-bucketcfn
+      PublicAccessBlockConfiguration: # コンソール画面でいうところの「パブリックアクセスをすべてブロック」オンの状態
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: Name
+          Value: !Sub ${NameBase}-bucket_cfn
+
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - s3:PutObject #UL許可バケットPolicyにJSON形式に置換されて記述される
+              - s3:GetObject #DL許可バケットPolicyにJSON形式に置換されて記述される
+            Effect: Allow
+            #▼ポリシーが適用されるリソースを指定
+            #!GetAtt S3Bucket.Arnで、S3バケットのARN（Amazonリソースネーム）を取得し、*を使ってリソースのすべてのオブジェクトに対して許可
+            Resource: !Join ["/", [!GetAtt S3Bucket.Arn, "*"]] #ポリシーが適用されるリソースを指定
+            Principal:
+              Service: ec2.amazonaws.com
+
+  S3IAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      Path: /
+      Policies: #IAMのS3AccessPolicyにJSON形式に置換されて記述される
+        - PolicyName: S3AccessPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:GetObject
+                Resource: !Join ["/", [!GetAtt S3Bucket.Arn, "*"]]
+
+  S3InstanceProfile: #S3IAMRoleで作ったロールをEC2にあてる
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /
+      Roles:
+        - !Ref S3IAMRole
+#以下の記述で同じregion内のインスタンスにIAMロールをアタッチしようと思いましたが、無理でした。
+#ＥＣ２インスタンス作成時に適用しないといけないみたいです。
+  # EC2Instance:
+  #   Type: 'AWS::EC2::Instance'
+  #   Properties:
+  #     IamInstanceProfile:
+  #       !Ref S3InstanceProfile
+
+
+Outputs:
+  S3BucketName:
+    Description: S3 Bucket Name
+    Value: !Ref S3Bucket

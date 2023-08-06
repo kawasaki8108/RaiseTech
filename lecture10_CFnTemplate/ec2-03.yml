@@ -1,0 +1,74 @@
+# ----------Outputsのメモ----------
+# VPCId：vpc-01-VPCId
+# PublicSubnetIds：vpc-01-PublicSubnetIds
+# PrivateSubnetIds：vpc-01-PrivateSubnetIds
+# SecurityGroupIds for EC2:sg-02-app-sg
+# SecurityGroupIds for ALB:sg-02-alb-sg
+# SecurityGroupIds for RDS:sg-02-rds-sg
+# EC2PublicIP：ec2-03-EC2PublicIP
+# EC2PublicDnsName：ec2-03-EC2PublicDnsName
+# EC2InstanceID：ec2-03-EC2InstanceID
+
+# EC2インスタンス作成のテンプレート
+AWSTemplateFormatVersion: "2010-09-09"
+Description: create-ec2
+Parameters:
+  NameBase:
+    Description: this is base name
+    Type: String
+    Default: lecture10
+  OS: # Amazon Linux 2の最新のAMIを取得する
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
+
+Resources:
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: ap-northeast-1c
+      ImageId: !Ref OS  # Amazon Linux 2
+      InstanceType: t2.micro
+      KeyName: Kawasaki1002
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: "true"
+          DeviceIndex: "0"
+          SubnetId: !Select [1, !Split [",", !ImportValue "vpc-01-PublicSubnetIds"]]
+          GroupSet:
+            - !ImportValue sg-02-app-sg
+      # SecurityGroupIds:
+      #   - !ImportValue sg-02-app-sg
+      # SubnetId: !Select [1, !Split [",", !ImportValue "vpc-01-PublicSubnetIds"]] 
+      Tags:                 #タグの指定、Key、Valueの順に記載する
+          - Key: Name
+            Value: !Sub ${NameBase}-al2_instance_cfn
+      BlockDeviceMappings:          #ストレージの設定
+        - DeviceName: /dev/xvda         #デバイス名
+          Ebs:
+            VolumeType: gp2         #ボリュームタイプ
+            DeleteOnTermination: true       #インスタンス終了時に削除するのか
+            VolumeSize: 8          #ディスクサイズ（GiB）
+      UserData:
+        !Base64 |
+          #!/bin/bash
+          sudo yum update
+#         sudo yum install gcc
+#         gpg2 --keyserver keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+#         sudo yum install -y git
+#         sudo amazon-linux-extras install nginx1
+
+Outputs:
+  EC2PublicIP:
+    Description: Public IP of EC2 instance
+    Value: !GetAtt EC2Instance.PublicIp
+    Export: 
+      Name: !Sub ${AWS::StackName}-EC2PublicIP
+  EC2PublicDnsName:
+    Description: PublicDnsName of EC2 instance
+    Value: !GetAtt EC2Instance.PublicDnsName
+    Export: 
+      Name: !Sub ${AWS::StackName}-EC2PublicDnsName
+  EC2InstanceID:
+    Description: InstanceID of EC2 instance
+    Value: !Ref EC2Instance
+    Export: 
+      Name: !Sub ${AWS::StackName}-EC2InstanceID
