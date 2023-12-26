@@ -9,8 +9,8 @@
    * 公開鍵、秘密鍵がローカル(C>user>.ssh内)に自動格納される
    * ▼project_key：秘密鍵<br>
     ![秘密鍵のイメージ](image_12/CircleCI_001_秘密鍵のイメージ.png)
-    ▼project_key.pub：公開鍵<br>
-   * ![公開鍵のイメージ](image_12/CircleCI_002_公開鍵のイメージ.png)
+   * ▼project_key.pub：公開鍵<br>
+    ![公開鍵のイメージ](image_12/CircleCI_002_公開鍵のイメージ.png)
    * 公開鍵を連携したいGitHubのrepo>Setting>Deploy key(左のペイン)から埋め込む
    * 秘密鍵をCircleCIの画面誘導に沿って埋め込む
    * 参考記事）https://qiita.com/Nagisa-kjm/items/078e04915b8f5ed2879f
