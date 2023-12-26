@@ -15,10 +15,10 @@
    * 秘密鍵をCircleCIの画面誘導に沿って埋め込む
    * 参考記事）https://qiita.com/Nagisa-kjm/items/078e04915b8f5ed2879f
 2. GitHubの指定したリポジトリに.circleciフォルダが生成される<br>
-▼CircleCI_01_初期動作確認<br>
+▼GitHubに自動生成された、初期動作確認時のデフォルトのconfig<br>
 ![GitHubに自動生成された、初期動作確認時のデフォルトのconfig](image_12/CircleCI_02_初期動作確認時のデフォルトのconfig.png)
 3. CircleCIのダッシュボード上で初期設定のワークフロー「say-hello」が実行され、正常に動作したことがわかる<br>
-▼CircleCI_01_初期動作確認<br>
+▼初期動作確認<br>
 ![CircleCI_01_初期動作確認](image_12/CircleCI_01_初期動作確認.png)
 
 ### サンプルコンフィグ適用
