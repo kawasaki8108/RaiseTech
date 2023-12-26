@@ -16,7 +16,7 @@ jobs:
       - run:
           name: run cfn-lint
           command: |
-            cfn-lint -i W3002 -t lecture10_CFnTemplate/*.yml
+            cfn-lint -i W3010 -t lecture10_CFnTemplate/*.yml
 
 workflows:
   raisetech:
