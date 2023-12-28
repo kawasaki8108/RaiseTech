@@ -150,7 +150,7 @@ Input target host name: test-server    #テストするサーバのホスト名�
     │   └── sample_spec.rb.bk
     └── spec_helper.rb
 ```
-* やってないけど参考記事）[Serverspecでテスト自動化-IDCFテックブログ]https://blog.idcf.jp/entry/serverspec-auto-test
+* 参考記事）[Serverspecでテスト自動化-IDCFテックブログ](https://blog.idcf.jp/entry/serverspec-auto-test)
 
 #### 4.テストコードを変更
 * 「sample_spec.rb」を以下の通り変更
