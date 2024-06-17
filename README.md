@@ -3,6 +3,10 @@
 ## 概要
 - CRUD 処理が出来る簡単な Rails アプリケーションを稼働できるインフラストラクチャを構成しました
 - CI/CDツールを使い、AWSリソース構築からアプリケーションの実行環境構築およびデプロイまで自動化しました
+- ソースコードは別リポジトリ（[CircleCI-Ansible-test](https://github.com/kawasaki8108/CircleCI-Ansible-test)）に格納しております
+#### インフラ構成図
+![circleci-cfn-ansible-serverspecのインフラ構成図](image_14/circleci-cfn-ansible-serverspecのインフラ構成図(白背景).png)
+
 
 ## 動作環境
 ### ruby
@@ -27,14 +31,26 @@ v17.9.1
 1.22.19
 ```
 
-## AWS 環境構成説明
+## 環境構成説明
 ### 概要
+CircleCIのワークフローで以下のjobを実行し、プロビジョニングしています。
+- CloudFormationのテンプレートファイルに対してリンターテスト実行
+- CloudFormationでAWS Cloudに各種リソースを作成
+- AnsibleでEC2に対してRailsアプリケーションを実行するための環境を構築およびサービス起動
+- ServerSpecでRailsアプリケーションのレスポンスを確認
 
-このリポジトリに掲載されているAWS構成図は、Railsアプリケーションのインフラストラクチャを示しており、AWS CloudFormationを使用して設計・構築しています。
+### 事前設定
+詳細は[lecture13.md](lecture13.md)を参照ください。
+- CircleCI上で各種環境変数を設定しています
+  - SSH Key(事前に設定しているキーペアの秘密鍵)を用意し、そのFingerprintを環境変数として設定
+  - IAM Roleのarn（OIDC用）
+  - AWSのRegion
+  - RDS(MySQL)のパスワード
+- AWSでCircleCIをIDプロバイダとして登録し、OIDC用のIAM Roleを作成(フェデレーションの設定)
+- RDSのパスワードをParameterStoreに登録
 
-### 各ソリューション
+### 各AWSリソースの説明
 #### EC2
-
 - 今回は簡単なRailsアプリケーションを実行するため＋コストと複雑性を抑えるため、1台のEC2インスタンスを使用しています。
 
 #### RDS
@@ -71,5 +87,6 @@ v17.9.1
 |第14回|第13回課題のライブコーディング-1-|該当なし|-|
 |第15回|第13回課題のライブコーディング-2-|該当なし|-|
 |第16回|現場へ出ていくにあたって|該当なし|最終回|
+
 <br>
 以上
