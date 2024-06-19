@@ -1,14 +1,17 @@
-# 学習アウトプット用リポジトリ
+# CI/CDを用いたRailsアプリケーションのインフラストラクチャ自動構築
 
 ## 概要
+- CRUD 処理が出来る簡単な Rails アプリケーションを稼働できるインフラストラクチャを構成しました
+- CI/CDツールを使い、AWSリソース構築からアプリケーションの実行環境構築およびデプロイまで自動化しました
+- ソースコードは別リポジトリ（[CircleCI-Ansible-test](https://github.com/kawasaki8108/CircleCI-Ansible-test)）に格納しております
+#### インフラ構成図
+![circleci-cfn-ansible-serverspecのインフラ構成図](image_14/circleci-cfn-ansible-serverspecのインフラ構成図(白背景).png)
 
-CRUD 処理が出来る簡単な Rails アプリケーションを稼働できるインフラストラクチャを構成しました
 
 ## 動作環境
 ### ruby
-
 ```bash
-3.1.2
+3.2.3
 ```
 ### Bundler
 ```bash
@@ -16,7 +19,7 @@ CRUD 処理が出来る簡単な Rails アプリケーションを稼働でき�
 ```
 ### Rails
 ```bash
-7.0.4
+7.1.3.2
 ```
 ### Node
 ```bash
@@ -26,24 +29,27 @@ v17.9.1
 ```bash
 1.22.19
 ```
-### DB エンジン
-- MySQL
-```bash
-v8.0.33
-```
 
-## CloudFormationで構築した環境の構成図
-![lecture05構成図](image_05/RiaseTech-lecture05構成図.png)
-
-
-## AWS 環境構成説明
+## 環境構成説明
 ### 概要
+CircleCIのワークフローで以下のjobを実行し、プロビジョニングしています。
+- CloudFormationのテンプレートファイルに対してリンターテスト実行
+- CloudFormationでAWS Cloudに各種リソースを作成
+- AnsibleでEC2に対してRailsアプリケーションを実行するための環境を構築およびサービス起動
+- ServerSpecでRailsアプリケーションのレスポンスを確認
 
-このリポジトリに掲載されているAWS構成図は、Railsアプリケーションのインフラストラクチャを示しており、AWS CloudFormationを使用して設計・構築しています。
+### 事前設定
+詳細は[lecture13.md](lecture13.md)を参照ください。
+- CircleCI上で各種環境変数を設定しています
+  - SSH Key(事前に設定しているキーペアの秘密鍵)を用意し、そのFingerprintを環境変数として設定
+  - IAM Roleのarn（OIDC用）
+  - AWSのRegion
+  - RDS(MySQL)のパスワード
+- AWSでCircleCIをIDプロバイダとして登録し、OIDC用のIAM Roleを作成(フェデレーションの設定)
+- RDSのパスワードをParameterStoreに登録
 
-### 各ソリューション
+### 各AWSリソースの説明
 #### EC2
-
 - 今回は簡単なRailsアプリケーションを実行するため＋コストと複雑性を抑えるため、1台のEC2インスタンスを使用しています。
 
 #### RDS
@@ -76,9 +82,10 @@ v8.0.33
 |第10回|CloudFormation<br>└第5回課題で作成した環境構築|[lecture10.md](lecture10.md)<br>└[～-vpc-01.md](lecture10-vpc-01.md)<br>└[～-sg-02.md](lecture10-sg-02.md)<br>└[～-ec2-03.md](lecture10-s3-06.md)<br>└[～-rds-04.md](lecture10-rds-04.md)<br>└[～-alb-05.md](lecture10-alb-05.md)<br>└[～-s3-06.md](lecture10-s3-06.md)|lecture10.mdをサマリーとして、詳細はスタック名を付けた名前の.mdファイルに分けました。<br>ymlファイルはlecture10_CFnTemlateフォルダに入れています|
 |第11回|インフラのコード化を支援するツール<br>ServerSpec|[lecture11.md](lecture11.md)|2023.8.6からSAAの学習に入りました|
 |第12回|CI/CDツール<br>CircleCI導入<br>config.ymlをリポジトリへ組込んで稼働|[lecture12.md](lecture12.md)|-|
-|第13回||||
-|第14回||||
-|第15回||||
-|第16回||||
+|第13回|プロビジョニングツールとCI/CDツールの併用|[lecture13.md](lecture13.md)|CircleCIでCFn→ansible→ServerSpecのワークフローを回す|
+|第14回|第13回課題のライブコーディング-1-|該当なし|-|
+|第15回|第13回課題のライブコーディング-2-|該当なし|-|
+|第16回|現場へ出ていくにあたって|該当なし|最終回|
+
 <br>
 以上
