@@ -1,7 +1,7 @@
 # CI/CDを用いたRailsアプリケーションのインフラストラクチャ自動構築
 
 ## 概要
-- CRUD 処理が出来る簡単な Rails アプリケーションを稼働できるインフラストラクチャを構成しました
+- CRUD 処理が出来る簡単な[Railsアプリケーション](https://github.com/yuta-ushijima/raisetech-live8-sample-app)を稼働できるインフラストラクチャを構成しました
 - CI/CDツールを使い、AWSリソース構築からアプリケーションの実行環境構築およびデプロイまで自動化しました
 - ソースコードは別リポジトリ（[CircleCI-Ansible-test](https://github.com/kawasaki8108/CircleCI-Ansible-test)）に格納しております
 #### インフラ構成図
